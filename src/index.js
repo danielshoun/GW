@@ -105,7 +105,7 @@ async function closeElection() {
 
 schedule.scheduleJob(
     {
-        hour: 5,
+        hour: 17,
         minute: 0,
         dayOfWeek: 4,
         dayOfMonth: [8, 9, 10, 11, 12, 13, 14, 22, 23, 24, 25, 26, 27, 28]
