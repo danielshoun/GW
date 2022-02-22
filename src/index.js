@@ -33,7 +33,12 @@ async function createElection() {
     const nomineeRole = await guild.roles.fetch(process.env.NOMINEE_ROLE_ID);
     const idiotKingRole = await guild.roles.fetch(process.env.IDIOT_KING_ROLE_ID);
     if (nomineeRole.members.size === 0) {
-        await channel.send(`No users were nominated for this election cycle. ${idiotKingRole.members.at(0)} retains their title.`)
+        const randomIdiotKing = await guild.members.fetch().random();
+        if (idiotKingRole.members.size === 1) {
+            await idiotKingRole.members.at(0).roles.remove(idiotKingRole);
+        }
+        await randomIdiotKing.roles.add(idiotKingRole);
+        await channel.send(`No users were nominated for this election cycle. ${randomIdiotKing} has been randomly selected as Idiot King.`)
     } else if (nomineeRole.members.size === 1) {
         if (idiotKingRole.members.size === 1) {
             await idiotKingRole.members.at(0).roles.remove(idiotKingRole);
@@ -108,7 +113,7 @@ schedule.scheduleJob(
         hour: 17,
         minute: 0,
         dayOfWeek: 4,
-        dayOfMonth: [8, 9, 10, 11, 12, 13, 14, 22, 23, 24, 25, 26, 27, 28]
+        dayOfMonth: [10, 11, 12, 13, 14, 15, 16, 24, 25, 26, 27, 28, 29, 30]
     }, closeElection
 )
 
@@ -152,14 +157,20 @@ benefits:
     }
 
     if (interaction.isButton()) {
-        if(electionData[interaction.customId]) {
-            electionData[interaction.customId] += 1;
-            await fs.promises.writeFile('election-data.json', JSON.stringify(electionData), 'utf8');
-            await interaction.reply({ content: 'Your vote has been recorded.', ephemeral: true });
+        if (!electionData['voted']) electionData['voted'] = [];
+        if (electionData['voted'].includes(interaction.member.id)) {
+            await interaction.reply({ content: 'You have already voted in this election.', ephemeral: true })
         } else {
-            electionData[interaction.customId] = 1;
-            await fs.promises.writeFile('election-data.json', JSON.stringify(electionData), 'utf8');
-            await interaction.reply({ content: 'Your vote has been recorded.', ephemeral: true });
+            electionData['voted'].push(interaction.member.id);    
+            if (electionData[interaction.customId]) {
+                electionData[interaction.customId] += 1;
+                await fs.promises.writeFile('election-data.json', JSON.stringify(electionData), 'utf8');
+                await interaction.reply({ content: 'Your vote has been recorded.', ephemeral: true });
+            } else {
+                electionData[interaction.customId] = 1;
+                await fs.promises.writeFile('election-data.json', JSON.stringify(electionData), 'utf8');
+                await interaction.reply({ content: 'Your vote has been recorded.', ephemeral: true });
+            }
         }
     }
 });
