@@ -6,30 +6,6 @@ const commands = [
     {
         name: 'register',
         description: 'Register to vote.'
-    },
-    {
-        name: 'nominate',
-        description: 'Nominate a person for Idiot King.',
-        options: [
-            {
-                type: ApplicationCommandOptionType.User,
-                name: 'user',
-                description: 'The user you want to nominate.',
-                required: true
-            }
-        ]
-    },
-    {
-        name: 'election-info',
-        description: 'Provides information about Idiot King elections.'
-    },
-    {
-        name: 'snap-election',
-        description: 'Start a snap election.'
-    },
-    {
-        name: 'close-snap',
-        description: 'Close an ongoing snap election.'
     }
 ];
 
